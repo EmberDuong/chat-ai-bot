@@ -1,0 +1,98 @@
+﻿<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WhisperX Live Transcriber</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <div>
+          <p class="eyebrow">WhisperX Client</p>
+          <h1>Thu âm &amp; phiên âm trực tiếp</h1>
+          <p class="lede">
+            Ghi âm, tải file, và gửi thẳng tới WhisperX API mà không cần mock. Token mặc định là
+            <code>chuchimnon999</code> (có thể thay đổi).
+          </p>
+        </div>
+        <div class="status-pill" id="status-pill">Sẵn sàng</div>
+      </header>
+
+      <section class="panel" id="auth-panel">
+        <h2>1. Cấu hình</h2>
+        <div class="field-grid">
+          <label>
+            Token (Bearer)
+            <input type="password" id="token-input" value="chuchimnon999" autocomplete="off" />
+          </label>
+          <label>
+            Ngôn ngữ mục tiêu
+            <select id="language-select">
+              <option value="vi" selected>Tiếng Việt (vi)</option>
+              <option value="en">English (en)</option>
+              <option value="auto">Auto detect</option>
+            </select>
+          </label>
+          <label>
+            Batch size
+            <input type="number" id="batch-input" value="16" min="1" max="64" />
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="diarization-toggle" checked />
+            <span>Bật speaker diarization</span>
+          </label>
+        </div>
+        <small class="hint">Thông tin endpoint: <code>https://pnnbao97--whisperx-transcriber-transcriptionservice-tran-273f7e.modal.run</code></small>
+      </section>
+
+      <section class="panel" id="capture-panel">
+        <h2>2. Thu âm hoặc tải file</h2>
+        <div class="capture-grid">
+          <div class="record-card">
+            <button id="record-btn" class="record-btn">Bắt đầu ghi âm</button>
+            <p class="timer" id="record-timer">00:00</p>
+            <p class="subtle">Nhấn để bắt đầu, nhấn lần nữa để dừng.</p>
+          </div>
+          <div class="upload-card">
+            <div class="drop-zone" id="drop-zone" tabindex="0">
+              <p class="drop-title">Kéo & thả file audio (WAV/MP3/M4A/OGG)</p>
+              <p class="subtle">hoặc</p>
+              <button type="button" class="secondary" id="select-file-btn">Chọn file từ máy</button>
+              <input type="file" id="file-input" accept="audio/*" hidden />
+            </div>
+            <div id="file-meta" class="file-meta">Chưa có file.</div>
+          </div>
+        </div>
+        <audio id="preview" controls class="preview" hidden></audio>
+        <div class="actions">
+          <button id="reset-btn" class="ghost">Thu lại</button>
+          <button id="transcribe-btn" class="primary" disabled>Gửi đến WhisperX</button>
+        </div>
+      </section>
+
+      <section class="panel" id="result-panel">
+        <h2>3. Kết quả</h2>
+        <div id="result-status" class="result-status">Chưa có phiên âm.</div>
+        <div id="segments" class="segments"></div>
+        <details>
+          <summary>JSON đầy đủ</summary>
+          <pre id="raw-json">{}</pre>
+        </details>
+      </section>
+    </main>
+
+    <template id="segment-template">
+      <article class="segment">
+        <header>
+          <span class="segment-time"></span>
+          <span class="segment-speaker"></span>
+        </header>
+        <p class="segment-text"></p>
+      </article>
+    </template>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
