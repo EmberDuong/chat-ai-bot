@@ -68,13 +68,26 @@
         <audio id="preview" controls class="preview" hidden></audio>
         <div class="actions">
           <button id="reset-btn" class="ghost">Thu lại</button>
-          <button id="transcribe-btn" class="primary" disabled>Gửi đến WhisperX</button>
+          <button id="transcribe-btn" class="primary" disabled>
+            <span class="btn-label">Gửi đến WhisperX</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
+          </button>
         </div>
       </section>
 
       <section class="panel" id="result-panel">
         <h2>3. Kết quả</h2>
         <div id="result-status" class="result-status">Chưa có phiên âm.</div>
+        <div id="loader" class="loader" hidden>
+          <div class="loader-wave">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <p id="loader-text">Hệ thống đang lắng nghe…</p>
+        </div>
         <div id="segments" class="segments"></div>
         <details>
           <summary>JSON đầy đủ</summary>

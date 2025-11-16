@@ -22,6 +22,8 @@ const els = {
   segments: document.getElementById("segments"),
   template: document.getElementById("segment-template"),
   rawJson: document.getElementById("raw-json"),
+  loader: document.getElementById("loader"),
+  loaderText: document.getElementById("loader-text"),
 };
 
 const state = {
@@ -43,6 +45,18 @@ function setStatus(text, tone = "ready") {
 function setResultStatus(text, tone = "info") {
   els.resultStatus.textContent = text;
   els.resultStatus.dataset.tone = tone;
+}
+
+function toggleLoader(show, message) {
+  if (!els.loader) return;
+  if (show) {
+    els.loader.hidden = false;
+    if (message) {
+      els.loaderText.textContent = message;
+    }
+  } else {
+    els.loader.hidden = true;
+  }
 }
 
 function formatDuration(seconds) {
@@ -202,9 +216,11 @@ function resetAudio() {
   els.fileMeta.textContent = "Chưa có file.";
   els.fileInput.value = "";
   els.transcribeBtn.disabled = true;
+  els.transcribeBtn.classList.remove("loading");
   setResultStatus("Chưa có phiên âm.");
   els.segments.innerHTML = "";
   els.rawJson.textContent = "{}";
+  toggleLoader(false);
 }
 
 async function transcribe() {
@@ -218,6 +234,8 @@ async function transcribe() {
   setStatus("Đang tải lên", "processing");
   setResultStatus("Đang gửi tới WhisperX...", "info");
   els.transcribeBtn.disabled = true;
+  els.transcribeBtn.classList.add("loading");
+  toggleLoader(true, randomLoaderMessage());
 
   const query = new URLSearchParams({
     language,
@@ -250,15 +268,29 @@ async function transcribe() {
     els.rawJson.textContent = JSON.stringify(data, null, 2);
     setResultStatus(`Nhận ${data.segments?.length || 0} đoạn văn.`, "success");
     setStatus("Hoàn tất", "success");
+    toggleLoader(false);
   } catch (err) {
     console.error(err);
     setResultStatus("Lỗi: " + err.message, "error");
     setStatus("Lỗi", "error");
+    toggleLoader(false);
   } finally {
     if (state.audioBlob) {
       els.transcribeBtn.disabled = false;
     }
+    els.transcribeBtn.classList.remove("loading");
   }
+}
+
+function randomLoaderMessage() {
+  const phrases = [
+    "Hệ thống đang lắng nghe…",
+    "Đang gỡ rối từng decibel…",
+    "WhisperX đang viết lại câu chuyện của bạn…",
+    "Đang phân tích dấu hỏi, dấu sắc…",
+    "Chờ tí nhé, sắp xong rồi!"
+  ];
+  return phrases[Math.floor(Math.random() * phrases.length)];
 }
 
 function renderSegments(segments) {
